@@ -1,0 +1,74 @@
+name: Auto Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.5'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      # 构建前端
+      - name: Build Frontend
+        run: |
+          cd safe-ollama-ui
+          yarn install --frozen-lockfile
+          yarn run build
+        working-directory: ./
+
+      # 多平台构建后端
+      - name: Build Backend for All Platforms
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o bin/safe-ollama-linux
+          GOOS=darwin GOARCH=arm64 go build -o bin/safe-ollama-macos
+          GOOS=windows GOARCH=amd64 go build -o bin/safe-ollama.exe
+          cp config.yml bin
+        working-directory: ./
+
+      # 打包所有可执行文件
+      - name: Package Artifacts
+        run: |
+          cd bin
+          mkdir -p release
+          
+          # 打包 Linux
+          tar -czvf release/safe-ollama-linux-amd64.tar.gz safe-ollama-linux config.yml
+          
+          # 打包 macOS
+          tar -czvf release/safe-ollama-macos-arm64.tar.gz safe-ollama-macos config.yml
+          
+          # 打包 Windows
+          zip release/safe-ollama-windows-amd64.zip safe-ollama.exe config.yml
+
+      # 创建 Release 并上传
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bin/release/safe-ollama-linux-amd64.tar.gz
+            bin/release/safe-ollama-macos-arm64.tar.gz
+            bin/release/safe-ollama-windows-amd64.zip
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            Multi-platform build for ${{ github.ref_name }}
+            - Linux (amd64)
+            - macOS (arm64)
+            - Windows (amd64)
