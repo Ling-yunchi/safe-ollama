@@ -2,15 +2,14 @@ package main
 
 import (
 	"embed"
+	"github.com/gin-gonic/gin"
+	"github.com/samber/slog-gin"
 	"io/fs"
 	"net/http"
 	"safe-ollama/config"
 	"safe-ollama/handler"
 	"safe-ollama/model"
 	"safe-ollama/utils"
-
-	"github.com/gin-gonic/gin"
-	"github.com/samber/slog-gin"
 )
 
 //go:embed dist/*
@@ -44,12 +43,7 @@ func main() {
 		http.ServeFileFS(c.Writer, c.Request, fsys, "index.html")
 	})
 
-	err := r.SetTrustedProxies(nil)
-	if err != nil {
-		panic(err)
-	}
-
-	err = r.Run(config.ServerAddr)
+	err := r.Run(config.ServerAddr)
 	if err != nil {
 		panic(err)
 	} else {

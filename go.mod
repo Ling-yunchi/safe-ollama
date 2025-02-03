@@ -3,6 +3,7 @@ module safe-ollama
 go 1.23.5
 
 require (
+	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-gonic/gin v1.10.0
 	github.com/spf13/viper v1.19.0
 	gorm.io/driver/sqlite v1.5.7

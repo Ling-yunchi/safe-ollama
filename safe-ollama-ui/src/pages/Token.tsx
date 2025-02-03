@@ -106,7 +106,7 @@ function Token() {
               <TableCell className="font-medium">{token.id}</TableCell>
               <TableCell>{token.name}</TableCell>
               <TableCell className="flex justify-between items-center">
-                {token.token} <CopyButton value={token.token}></CopyButton>
+                {token.token} <CopyButton value={token.token} />
               </TableCell>
               <TableCell className="text-left">
                 {new Date(token.createdAt).toLocaleString()}

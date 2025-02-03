@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"safe-ollama/config"
 	"safe-ollama/middleware"
-	"safe-ollama/model"
 	"sync"
 	"time"
 
@@ -23,8 +22,9 @@ func OllamaHandler(router *gin.Engine, db *gorm.DB) {
 	chatRouter.POST("/v1/chat/completions", forwardRequest("/v1/chat/completions"))
 	chatRouter.POST("/v1/completions", forwardRequest("/v1/completions"))
 	chatRouter.POST("/v1/embeddings", forwardRequest("/v1/embeddings"))
+	chatRouter.GET("/v1/models", forwardRequest("/v1/models"))
 
-	ollamaRouter := r.Group("/api", middleware.LoginAuth(), middleware.RoleAuth([]string{model.ADMIN_ROLE}))
+	ollamaRouter := r.Group("/api", middleware.OllamaAuth(db))
 	ollamaRouter.POST("/create", forwardRequest("/api/create"))
 	ollamaRouter.GET("/tags", forwardRequest("/api/tags"))
 	ollamaRouter.POST("/show", forwardRequest("/api/show"))
