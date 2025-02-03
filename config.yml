@@ -1,0 +1,14 @@
+server:
+  address: "localhost:8080"
+  logging:
+    level: "info"
+    output: "stdout"
+  jwtkey: "secret"
+admin:
+  username: "admin"
+  password: "admin"
+ollama:
+  url: "http://localhost:11434"
+  timeout: 300 # seconds
+database:
+  url: "safe_ollama.db"
