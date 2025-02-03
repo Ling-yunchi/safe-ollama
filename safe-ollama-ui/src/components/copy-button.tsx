@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Check, Copy } from "lucide-react";
+import copy from "copy-to-clipboard";
 
 export function CopyButton({
   value,
@@ -18,7 +19,11 @@ export function CopyButton({
       size="icon"
       className={className}
       onClick={() => {
-        navigator.clipboard.writeText(value);
+        try {
+          navigator.clipboard.writeText(value);
+        } catch {
+          copy(value);
+        }
         setCheck(true);
         onCopy?.();
         setTimeout(() => {

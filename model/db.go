@@ -5,7 +5,7 @@ import (
 	"safe-ollama/config"
 	"safe-ollama/utils"
 
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 

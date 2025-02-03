@@ -90,6 +90,13 @@ GOOS=windows GOARCH=amd64 go build -o safe-ollama.exe
 
 ---
 
+## 常见问题
+
+- 返回403错误
+  - ollama启动服务时需要允许跨域
+  - 设置环境变量`OLLAMA_ORIGINS="*"`来允许跨域请求
+  - 使用`OLLAMA_ORIGINS="*" ollama serve`来启动ollama服务
+
 ## 许可证
 
 本项目使用 MIT 许可证。请在你的任何修改或分发中包含原始许可证信息。
