@@ -11,7 +11,6 @@ import {
 import { CartesianGrid, XAxis, Area, AreaChart } from "recharts";
 import { useAtomValue } from "jotai";
 import { userToken } from "@/storage/user";
-import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
 
 const chartConfig = {
@@ -43,11 +42,11 @@ function Home() {
   const fetchData = async () => {
     setLoading(true);
     const _endDate = new Date();
-    const endDateStr = _endDate.toISOString().split("T")[0];
+    const endDateStr = _endDate.toLocaleDateString("en-CA");
     // one week
     const _startDate = new Date(_endDate);
     _startDate.setDate(_endDate.getDate() - 6);
-    const startDateStr = new Date(_startDate).toISOString().split("T")[0];
+    const startDateStr = new Date(_startDate).toLocaleDateString("en-CA");
     console.log(startDateStr, endDateStr);
 
     const response = await fetch(
@@ -62,7 +61,8 @@ function Home() {
     );
 
     if (!response.ok) {
-      toast.error("Failed to fetch tokens data");
+      // toast.error("Failed to fetch tokens data");
+      setLoading(false);
       return;
     }
     const data = (await response.json()) as TokenUsage[];
@@ -75,7 +75,7 @@ function Home() {
     let currentDate = startDate;
 
     while (currentDate <= endDate) {
-      const currentDateString = currentDate.toISOString().split("T")[0];
+      const currentDateString = currentDate.toLocaleDateString("en-CA");
       const foundData = data.find((d) => d.date === currentDateString);
 
       dateRange.push({
@@ -113,7 +113,7 @@ function Home() {
               <AreaChart data={tokenUsage}>
                 <defs>
                   <linearGradient
-                    id="fillPromptToken"
+                    id="fillPromptTokens"
                     x1="0"
                     y1="0"
                     x2="0"

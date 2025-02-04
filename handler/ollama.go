@@ -18,11 +18,13 @@ func OllamaHandler(router *gin.Engine, db *gorm.DB) {
 	chatRouter := r.Group("", middleware.OllamaAuth(db), middleware.OllamaTokenCount(db))
 	chatRouter.POST("/api/generate", forwardRequest("/api/generate"))
 	chatRouter.POST("/api/chat", forwardRequest("/api/chat"))
-	chatRouter.POST("/api/chat-stream", forwardRequest("/api/chat-stream"))
+	chatRouter.POST("/api/embed", forwardRequest("/api/embed"))
+	chatRouter.POST("/api/embeddings", forwardRequest("/api/embeddings"))
 	chatRouter.POST("/v1/chat/completions", forwardRequest("/v1/chat/completions"))
 	chatRouter.POST("/v1/completions", forwardRequest("/v1/completions"))
 	chatRouter.POST("/v1/embeddings", forwardRequest("/v1/embeddings"))
 	chatRouter.GET("/v1/models", forwardRequest("/v1/models"))
+	//chatRouter.GET("/v1/models/:model", forwardRequest("/api/model/:model"))
 
 	ollamaRouter := r.Group("/api", middleware.OllamaAuth(db))
 	ollamaRouter.POST("/create", forwardRequest("/api/create"))
@@ -32,7 +34,6 @@ func OllamaHandler(router *gin.Engine, db *gorm.DB) {
 	ollamaRouter.POST("/pull", forwardRequest("/api/pull"))
 	ollamaRouter.POST("/push", forwardRequest("/api/push"))
 	ollamaRouter.POST("/embed", forwardRequest("/api/embed"))
-	ollamaRouter.POST("/embeddings", forwardRequest("/api/embeddings"))
 	ollamaRouter.GET("/ps", forwardRequest("/api/ps"))
 	ollamaRouter.DELETE("/delete", forwardRequest("/api/delete"))
 	ollamaRouter.GET("/version", forwardRequest("/api/version"))
@@ -40,11 +41,11 @@ func OllamaHandler(router *gin.Engine, db *gorm.DB) {
 
 var (
 	httpClient = &http.Client{
-		Timeout: 60 * time.Second,
+		Timeout: time.Duration(config.OllamaTimeout) * time.Second,
 		Transport: &http.Transport{
 			MaxIdleConns:        200,
 			MaxIdleConnsPerHost: 10,
-			IdleConnTimeout:     time.Duration(config.OllamaTimeout) * time.Second,
+			IdleConnTimeout:     90 * time.Second,
 		},
 	}
 	rateLimiter = make(chan struct{}, 200)
